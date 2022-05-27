@@ -43,9 +43,11 @@ namespace StudentsBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddStudent([FromBody] Student newStudent)
         {
-            // add validation
             if (newStudent is null)
                 return BadRequest("Student is null");
+            if (!ModelState.IsValid)
+                return BadRequest("unvalid student");
+
             await _studentsServices.InsertStudent(newStudent);
             //return CreatedAtRoute("Students", new { id = newStudent.id }, newStudent);
             return CreatedAtAction(nameof(AddStudent), new { id = newStudent.id }, newStudent);
