@@ -21,7 +21,14 @@ namespace StudentsBackend.Controllers
         public async Task<IActionResult> GetStudents()
         {
             var allStudents = await _studentsServices.GetStudents();
-            return Ok(allStudents);
+            var studentsDtoList = new List<StudentDto>();
+
+            if (allStudents is not null)
+            {
+                studentsDtoList = allStudents.Select(s => new StudentDto(s.StudentId, s.LastName, s.Nation)).ToList();
+            }
+            return studentsDtoList.Any() ? Ok(studentsDtoList) : NotFound();
+            //return Ok(allStudents);
         }
         [HttpGet("{studentId}")]
         public async Task<IActionResult> GetStudent(string studentId)

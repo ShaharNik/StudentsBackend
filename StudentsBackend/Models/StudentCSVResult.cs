@@ -27,7 +27,7 @@ namespace StudentsBackend.Models
                 foreach (var s in _StudentData)
                 {
                     await streamWriter.WriteLineAsync(
-                      $"{s.studentId}, {s.firstName}, {s.lastName}"
+                      $"{s.StudentId}, {s.FirstName}, {s.LastName}"
                     );
                     await streamWriter.FlushAsync();
                 }

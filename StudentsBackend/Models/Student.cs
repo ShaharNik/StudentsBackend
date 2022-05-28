@@ -10,32 +10,50 @@ namespace StudentsRegistrations.Models
 {
     public class Student
     {
-        public Student(string studentId, string lastName, string firstName, string nation, bool isSubmitted)
+        public Student(string studentId, string lastName, string firstName, string nation)
         {
-            this.studentId = studentId;
-            this.lastName = lastName;
-            this.firstName = firstName;
-            this.nation = nation;
-            //this.isSubmitted = isSubmitted;
+            this.StudentId = studentId;
+            this.LastName = lastName;
+            this.FirstName = firstName;
+            this.Nation = nation;
+            this.IsSubmitted = false;
         }
 
-        //public String institution { get; set; }
         [BsonId]
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string? id { get; set; }
 
         [Required(ErrorMessage = "Student ID is required")]
-        public string studentId { get; set; }
-        public string lastName { get; set; }
-        public string firstName { get; set; }
-        public string nation { get; set; }
+        [BsonElement("studentId")]
+        public string StudentId { get; set; }
+        [BsonElement("lastName")]
+        public string LastName { get; set; }
+        [BsonElement("firstName")]
+        public string FirstName { get; set; }
+        [BsonElement("nation")]
+        public string Nation { get; set; }
+        [BsonElement("isSubmitted")]
+        public bool IsSubmitted { get; set; } // needs to be private/Dto 
 
-        public bool isSubmitted { get; set; } // needs to be private !
-        //public String gender { get; set; }
-        //public String homePhoneNumber { get; set; }
-        //public String mobilePhoneNumber { get; set; }
-        //public String email { get; set; }
+        //public string Gender { get; set; }
+        //public string HomePhoneNumber { get; set; }
+        //public string MobilePhoneNumber { get; set; }
+        //public string Email { get; set; }
         //public DateTime BirthDay { get; set; }
-        //public String nation { get; set; }
+    }
+    public class StudentDto
+    {
+        public StudentDto(string studentId, string lastName, string nation)
+        {
+            StudentId = studentId;
+            LastName = lastName;
+            Nation = nation;
+        }
+
+        public string? id { get; set; }
+        public string? StudentId { get; set; }
+        public string? LastName { get; set; }
+        public string? FirstName { get; set; }
+        public string? Nation { get; set; }
     }
 }

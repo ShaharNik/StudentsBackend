@@ -30,7 +30,7 @@ namespace StudentsRegistrations.Services
 
         public async Task<long> countStudentsByNation(string nation)
         {
-            var nationFilter = Builders<Student>.Filter.Where(student => student.nation.Equals(nation));
+            var nationFilter = Builders<Student>.Filter.Where(student => student.Nation.Equals(nation));
             long countResult = await _students.CountDocumentsAsync(nationFilter);
             return countResult;
         }
@@ -42,20 +42,20 @@ namespace StudentsRegistrations.Services
 
         public async Task<Student> GetStudent(string studentId)
         {
-            var student = await _students.Find(student => student.studentId == studentId).FirstOrDefaultAsync();
+            var student = await _students.Find(student => student.StudentId == studentId).FirstOrDefaultAsync();
             return student;
         }
 
 
         public async Task<IEnumerable<Student>> GetUnsubmittedStudents()
         {
-            var allUnsubmittedStudents = await _students.Find(student => student.isSubmitted == false).ToListAsync();
+            var allUnsubmittedStudents = await _students.Find(student => student.IsSubmitted == false).ToListAsync();
             return allUnsubmittedStudents;
         }
 
         public async Task UpdateStudent(string studentId, Student updatedStudent)
         {
-            await _students.ReplaceOneAsync(s => s.studentId == updatedStudent.studentId, updatedStudent);
+            await _students.ReplaceOneAsync(s => s.StudentId == updatedStudent.StudentId, updatedStudent);
         }
 
     }
