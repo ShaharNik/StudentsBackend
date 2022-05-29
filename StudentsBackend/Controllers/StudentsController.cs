@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using StudentsBackend.Models;
 using StudentsRegistrations.Models;
@@ -16,7 +17,7 @@ namespace StudentsBackend.Controllers
         {
             _studentsServices = studentServices;
         }
-
+        [EnableCors("MyPolicy")]
         [HttpGet]
         public async Task<IActionResult> GetStudents()
         {
@@ -25,10 +26,9 @@ namespace StudentsBackend.Controllers
 
             if (allStudents is not null)
             {
-                studentsDtoList = allStudents.Select(s => new StudentDto(s.StudentId, s.LastName, s.Nation)).ToList();
+                studentsDtoList = allStudents.Select(s => new StudentDto(s.StudentId, s.FirstName, s.LastName, s.Nation)).ToList();
             }
             return studentsDtoList.Any() ? Ok(studentsDtoList) : NotFound();
-            //return Ok(allStudents);
         }
         [HttpGet("{studentId}")]
         public async Task<IActionResult> GetStudent(string studentId)
