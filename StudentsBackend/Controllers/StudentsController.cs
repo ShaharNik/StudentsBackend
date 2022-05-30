@@ -47,15 +47,20 @@ namespace StudentsBackend.Controllers
             var unsubmittedStudents = await _studentsServices.GetUnsubmittedStudents();
             return Ok(unsubmittedStudents);
         }
+        [Route("/api/Student")]
         [HttpPost]
         public async Task<IActionResult> AddStudent([FromBody] Student newStudent)
         {
-            if (newStudent is null)
-                return BadRequest("Student is null");
+            if (!Validation.isValidStudents(newStudent))
+                return BadRequest("unvalid student");
             if (!ModelState.IsValid)
                 return BadRequest("unvalid student");
 
-            await _studentsServices.InsertStudent(newStudent);
+            var studentCreated = await _studentsServices.InsertStudent(newStudent); // change to DTO, (not expose isSubmitted to client)
+
+            if (studentCreated == null)
+                return BadRequest("Student ID already exist");
+            
             //return CreatedAtRoute("Students", new { id = newStudent.id }, newStudent);
             return CreatedAtAction(nameof(AddStudent), new { id = newStudent.id }, newStudent);
         }
@@ -74,6 +79,9 @@ namespace StudentsBackend.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateStudent(string studentId, Student updatedStudent)
         {
+            if (!Validation.isValidStudents(updatedStudent))
+                return BadRequest("unvalid student");
+
             var student = await _studentsServices.GetStudent(studentId);
 
             if (student is null)
@@ -86,11 +94,20 @@ namespace StudentsBackend.Controllers
             return NoContent();
         }
         [Route("/ExportToCSV")]
-        public async Task<IActionResult> ExportToCSV()
+        [HttpGet]
+        public async Task<StudentCSVResult> ExportToCSV()
         {
             var allUnsubmittedStudents = await _studentsServices.GetUnsubmittedStudents();
             var fileDownloadName = "unsubmittedStudents.csv";
             return new StudentCSVResult(allUnsubmittedStudents, fileDownloadName);
+        }
+        [Route("/SubmitStudents")]
+        [HttpPut] 
+        public async Task<IActionResult> SubmitStudents()
+        {
+            await _studentsServices.SubmitAllUnsubmittedStudents();
+
+            return Ok();
         }
     }
 }

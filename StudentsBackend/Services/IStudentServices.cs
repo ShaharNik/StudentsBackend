@@ -10,12 +10,14 @@ namespace StudentsRegistrations.Services
     {
         Task<IEnumerable<Student>> GetStudents();
         Task<IEnumerable<Student>> GetUnsubmittedStudents();
-        Task<Student> InsertStudent(Student newStudent);
+        Task<Student?> InsertStudent(Student newStudent);
         Task<Student> GetStudent(string studentId);
 
         Task<long> countStudentsByNation(string country);
         Task DeleteStudent(string studentId);
 
         Task UpdateStudent(string studentId, Student Student);
+
+        Task SubmitAllUnsubmittedStudents();
     }
 }

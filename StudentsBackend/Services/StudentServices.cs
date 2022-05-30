@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using StudentsRegistrations.DB;
 using StudentsRegistrations.Models;
 using System;
@@ -22,10 +23,15 @@ namespace StudentsRegistrations.Services
             return allStudents;
         }
 
-        public async Task<Student> InsertStudent(Student newStudent)
+        public async Task<Student?> InsertStudent(Student newStudent)
         {
-            await _students.InsertOneAsync(newStudent);
-            return newStudent;
+            var checkIdNotExist = await _students.Find(student => student.StudentId == newStudent.StudentId).FirstOrDefaultAsync();
+            if (checkIdNotExist == null)
+            {
+                await _students.InsertOneAsync(newStudent);
+                return newStudent;
+            }
+            return null;
         }
 
         public async Task<long> countStudentsByNation(string nation)
@@ -56,6 +62,12 @@ namespace StudentsRegistrations.Services
         public async Task UpdateStudent(string studentId, Student updatedStudent)
         {
             await _students.ReplaceOneAsync(s => s.StudentId == updatedStudent.StudentId, updatedStudent);
+        }
+
+        public async Task SubmitAllUnsubmittedStudents()
+        {
+            var updateDefinition = Builders<Student>.Update.Set(s => s.IsSubmitted, true);
+            await _students.UpdateManyAsync(s => s.IsSubmitted == false, updateDefinition);
         }
 
     }

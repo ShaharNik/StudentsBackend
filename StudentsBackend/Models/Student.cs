@@ -26,12 +26,16 @@ namespace StudentsRegistrations.Models
         [Required(ErrorMessage = "Student ID is required")]
         [BsonElement("studentId")]
         public string StudentId { get; set; }
+
         [BsonElement("lastName")]
         public string LastName { get; set; }
+
         [BsonElement("firstName")]
         public string FirstName { get; set; }
+
         [BsonElement("nation")]
         public string Nation { get; set; }
+
         [BsonElement("isSubmitted")]
         public bool IsSubmitted { get; set; } // needs to be private/Dto 
 
@@ -50,7 +54,8 @@ namespace StudentsRegistrations.Models
             LastName = lastName;
             Nation = nation;
         }
-
+        [BsonId]
+        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string? id { get; set; }
         public string? StudentId { get; set; }
         public string? LastName { get; set; }
