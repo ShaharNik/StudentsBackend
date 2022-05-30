@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using StudentsBackend.Dto;
 using StudentsRegistrations.DB;
 using StudentsRegistrations.Models;
 using System;
@@ -43,7 +44,7 @@ namespace StudentsRegistrations.Services
 
         public async Task DeleteStudent(string studentId)
         {
-            await _students.DeleteOneAsync(student => student.id == studentId);
+            await _students.DeleteOneAsync(student => student.Id == studentId);
         }
 
         public async Task<Student> GetStudent(string studentId)

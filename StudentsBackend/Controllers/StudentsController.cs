@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using StudentsBackend.Dto;
 using StudentsBackend.Models;
 using StudentsRegistrations.Models;
 using StudentsRegistrations.Services;
@@ -12,23 +14,21 @@ namespace StudentsBackend.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly IStudentServices _studentsServices;
+        private readonly IMapper _mapper;
 
-        public StudentsController(IStudentServices studentServices)
+        public StudentsController(IStudentServices studentServices, IMapper mapper)
         {
             _studentsServices = studentServices;
+            _mapper = mapper;
         }
         [EnableCors("MyPolicy")]
         [HttpGet]
         public async Task<IActionResult> GetStudents()
         {
             var allStudents = await _studentsServices.GetStudents();
-            var studentsDtoList = new List<StudentDto>();
+            var allStudentsDto = _mapper.Map<IEnumerable<StudentDto>>(allStudents);
 
-            if (allStudents is not null)
-            {
-                studentsDtoList = allStudents.Select(s => new StudentDto(s.StudentId, s.FirstName, s.LastName, s.Nation)).ToList();
-            }
-            return studentsDtoList.Any() ? Ok(studentsDtoList) : NotFound();
+            return allStudentsDto.Any() ? Ok(allStudentsDto) : NotFound();
         }
         [HttpGet("{studentId}")]
         public async Task<IActionResult> GetStudent(string studentId)
@@ -49,20 +49,21 @@ namespace StudentsBackend.Controllers
         }
         [Route("/api/Student")]
         [HttpPost]
-        public async Task<IActionResult> AddStudent([FromBody] Student newStudent)
+        public async Task<IActionResult> AddStudent([FromBody] StudentDto newStudentDto)
         {
+            var newStudent = _mapper.Map<Student>(newStudentDto);
             if (!Validation.isValidStudents(newStudent))
                 return BadRequest("unvalid student");
             if (!ModelState.IsValid)
                 return BadRequest("unvalid student");
 
-            var studentCreated = await _studentsServices.InsertStudent(newStudent); // change to DTO, (not expose isSubmitted to client)
+            var studentCreated = await _studentsServices.InsertStudent(newStudent); // DTO, (not expose isSubmitted to client)
 
             if (studentCreated == null)
                 return BadRequest("Student ID already exist");
             
             //return CreatedAtRoute("Students", new { id = newStudent.id }, newStudent);
-            return CreatedAtAction(nameof(AddStudent), new { id = newStudent.id }, newStudent);
+            return CreatedAtAction(nameof(AddStudent), new { id = newStudent.Id }, newStudent);
         }
         [HttpDelete("{studentId}")]   
         public async Task<IActionResult> DeleteStudent(string studentId)
@@ -87,7 +88,7 @@ namespace StudentsBackend.Controllers
             if (student is null)
                 return NotFound();
 
-            updatedStudent.id = student.id;
+            updatedStudent.Id = student.Id;
 
             await _studentsServices.UpdateStudent(studentId, updatedStudent);
 

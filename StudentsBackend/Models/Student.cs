@@ -21,7 +21,7 @@ namespace StudentsRegistrations.Models
 
         [BsonId]
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
-        public string? id { get; set; }
+        public string? Id { get; set; }
 
         [Required(ErrorMessage = "Student ID is required")]
         [BsonElement("studentId")]
@@ -44,22 +44,5 @@ namespace StudentsRegistrations.Models
         //public string MobilePhoneNumber { get; set; }
         //public string Email { get; set; }
         //public DateTime BirthDay { get; set; }
-    }
-    public class StudentDto
-    {
-        public StudentDto(string studentId, string firstName, string lastName, string nation)
-        {
-            StudentId = studentId;
-            FirstName = firstName;
-            LastName = lastName;
-            Nation = nation;
-        }
-        [BsonId]
-        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
-        public string? id { get; set; }
-        public string? StudentId { get; set; }
-        public string? LastName { get; set; }
-        public string? FirstName { get; set; }
-        public string? Nation { get; set; }
     }
 }
