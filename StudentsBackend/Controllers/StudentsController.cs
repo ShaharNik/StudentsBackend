@@ -34,18 +34,19 @@ namespace StudentsBackend.Controllers
         public async Task<IActionResult> GetStudent(string studentId)
         {
             var student = await _studentsServices.GetStudent(studentId);
-
             if (student is null)
                 return NotFound();
+            var studentDto = _mapper.Map<StudentDto>(student);
 
-            return Ok(student);
+            return Ok(studentDto);
         }
         [Route("/unSubmitted")]
         [HttpGet]
         public async Task<IActionResult> GetUnsubmittedStudents()
         {
             var unsubmittedStudents = await _studentsServices.GetUnsubmittedStudents();
-            return Ok(unsubmittedStudents);
+            var allunsubmittedStudentsDto = _mapper.Map<IEnumerable<StudentDto>>(unsubmittedStudents);
+            return Ok(allunsubmittedStudentsDto);
         }
         [Route("/api/Student")]
         [HttpPost]
@@ -57,7 +58,7 @@ namespace StudentsBackend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("unvalid student");
 
-            var studentCreated = await _studentsServices.InsertStudent(newStudent); // DTO, (not expose isSubmitted to client)
+            var studentCreated = await _studentsServices.InsertStudent(newStudent); 
 
             if (studentCreated == null)
                 return BadRequest("Student ID already exist");

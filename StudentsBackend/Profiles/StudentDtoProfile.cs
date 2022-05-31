@@ -9,6 +9,7 @@ namespace StudentsBackend.Profiles
         public StudentDtoProfile()
         {
             // map student model to Dto
+            CreateMap<Student, StudentDto>();
             CreateMap<StudentDto, Student>();
         }
     }
